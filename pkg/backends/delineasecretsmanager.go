@@ -28,7 +28,7 @@ func (a *DelineaSecretServer) Login() error {
 
 // GetSecrets gets secrets from Delinea Secret Server and returns the formatted data
 // Currently there is no implementation present for versions nor annotations
-func (a *DelineaSecretServer) GetSecrets(path string, version string, annotations map[string]string) (map[string]interface{}, error) {
+func (a *DelineaSecretServer) GetSecrets(path string, version string, annotations map[string]string, options map[string]string) (map[string]interface{}, error) {
 
 	// Delinea users pass the path of a secret
 	// ex: <path:123#username>
@@ -77,8 +77,8 @@ func (a *DelineaSecretServer) GetSecrets(path string, version string, annotation
 // GetIndividualSecret will get the specific secret (placeholder) from the SM backend
 // For Delinea Secret Server, we only support placeholders replaced from the k/v pairs of a secret which cannot be individually addressed
 // So, we use GetSecrets and extract the specific placeholder we want
-func (v *DelineaSecretServer) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string) (interface{}, error) {
-	data, err := v.GetSecrets(kvpath, version, annotations)
+func (v *DelineaSecretServer) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
+	data, err := v.GetSecrets(kvpath, version, annotations, options)
 	if err != nil {
 		return nil, err
 	}

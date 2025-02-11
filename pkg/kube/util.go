@@ -24,8 +24,8 @@ func (e *missingKeyError) Error() string {
 }
 
 var genericPlaceholder, _ = regexp.Compile(`(?mU)<(.*)>`)
-var specificPathPlaceholder, _ = regexp.Compile(`(?mU)<path:([^#]+)#([^#]+)(?:#([^#]+))?>`)
-var indivPlaceholderSyntax, _ = regexp.Compile(`(?mU)path:(?P<path>[^#]+?)#(?P<key>[^#]+?)(?:#(?P<version>.+?))??`)
+var specificPathPlaceholder, _ = regexp.Compile(`(?mU)<path:([^#]+)#([^#]+)(?:#([^#]+))?(?:#([^#]+))?>`)
+var indivPlaceholderSyntax, _ = regexp.Compile(`(?mU)path:(?P<path>[^#]*?)#(?P<key>[^#]*?)(?:#(?P<version>[^#]*?))?(?:#(?P<options>[^:#]*?:[^,#]*?(?:,[^:#]*?:[^,#]*?)*?))?$`)
 
 // replaceInner recurses through the given map and replaces the placeholders by calling `replacerFunc`
 // with the key, value, and map of keys to replacement values
@@ -132,14 +132,21 @@ func genericReplacement(key, value string, resource Resource) (_ interface{}, er
 			path := indivSecretMatches[indivPlaceholderSyntax.SubexpIndex("path")]
 			key := indivSecretMatches[indivPlaceholderSyntax.SubexpIndex("key")]
 			version := indivSecretMatches[indivPlaceholderSyntax.SubexpIndex("version")]
+			optionsString := indivSecretMatches[indivPlaceholderSyntax.SubexpIndex("options")]
 
 			if resource.PathValidation != nil && !resource.PathValidation.MatchString(path) {
 				err = append(err, fmt.Errorf("the path %s is disallowed by %s restriction", path, types.EnvPathValidation))
 				return match
 			}
 
-			utils.VerboseToStdErr("calling GetIndividualSecret for secret %s from path %s at version %s", key, path, version)
-			secretValue, secretErr = resource.Backend.GetIndividualSecret(path, strings.TrimSpace(key), version, resource.Annotations)
+			options, convertError := utils.OptionsStringToMap(optionsString)
+			if convertError != nil {
+				err = append(err, convertError)
+				return match
+			}
+
+			utils.VerboseToStdErr("calling GetIndividualSecret for secret %s from path %s at version %s with options %s", key, path, version, optionsString)
+			secretValue, secretErr = resource.Backend.GetIndividualSecret(path, strings.TrimSpace(key), version, resource.Annotations, options)
 			if secretErr != nil {
 				err = append(err, secretErr)
 				return match

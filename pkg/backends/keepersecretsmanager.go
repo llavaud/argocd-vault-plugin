@@ -97,7 +97,7 @@ func buildSecretsMap(secretsMap map[string]interface{}, fieldMap map[string]inte
 
 // GetSecrets gets secrets from Keeper Secrets Manager. It does not currently
 // implement anything related to versions or annotations.
-func (a *KeeperSecretsManager) GetSecrets(path string, version string, annotations map[string]string) (map[string]interface{}, error) {
+func (a *KeeperSecretsManager) GetSecrets(path string, version string, annotations map[string]string, options map[string]string) (map[string]interface{}, error) {
 	records, err := a.client.GetSecrets([]string{
 		path,
 	})
@@ -148,8 +148,8 @@ func (a *KeeperSecretsManager) GetSecrets(path string, version string, annotatio
 
 // GetIndividualSecret returns the specified secret. It simply wraps the
 // GetSecrets call, and currently ignores the version parameter.
-func (v *KeeperSecretsManager) GetIndividualSecret(kvpath, secretName, version string, annotations map[string]string) (interface{}, error) {
-	secrets, err := v.GetSecrets(kvpath, version, annotations)
+func (v *KeeperSecretsManager) GetIndividualSecret(kvpath, secretName, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
+	secrets, err := v.GetSecrets(kvpath, version, annotations, options)
 	if err != nil {
 		return nil, err
 	}

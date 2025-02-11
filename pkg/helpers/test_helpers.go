@@ -521,7 +521,7 @@ func (v *MockVault) Login() error {
 func (v *MockVault) LoadData(data map[string]interface{}) {
 	v.Data = append(v.Data, data)
 }
-func (v *MockVault) GetSecrets(path string, version string, annotations map[string]string) (map[string]interface{}, error) {
+func (v *MockVault) GetSecrets(path string, version string, annotations map[string]string, options map[string]string) (map[string]interface{}, error) {
 	v.GetSecretsCalled = true
 	if len(v.Data) == 0 {
 		return make(map[string]interface{}), nil
@@ -532,7 +532,7 @@ func (v *MockVault) GetSecrets(path string, version string, annotations map[stri
 	num, _ := strconv.ParseInt(version, 10, 0)
 	return v.Data[num-1], nil
 }
-func (v *MockVault) GetIndividualSecret(path, secret, version string, annotations map[string]string) (interface{}, error) {
+func (v *MockVault) GetIndividualSecret(path, secret, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
 	v.GetIndividualSecretCalled = true
 	if len(v.Data) == 0 {
 		return nil, nil

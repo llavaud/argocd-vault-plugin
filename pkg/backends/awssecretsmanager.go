@@ -40,7 +40,7 @@ func (a *AWSSecretsManager) Login() error {
 }
 
 // GetSecrets gets secrets from aws secrets manager and returns the formatted data
-func (a *AWSSecretsManager) GetSecrets(path string, version string, annotations map[string]string) (map[string]interface{}, error) {
+func (a *AWSSecretsManager) GetSecrets(path string, version string, annotations map[string]string, options map[string]string) (map[string]interface{}, error) {
 	var opts = func(o *secretsmanager.Options) {}
 
 	input := &secretsmanager.GetSecretValueInput{
@@ -94,8 +94,8 @@ func (a *AWSSecretsManager) GetSecrets(path string, version string, annotations 
 // GetIndividualSecret will get the specific secret (placeholder) from the SM backend
 // For AWS, we only support placeholders replaced from the k/v pairs of a secret which cannot be individually addressed
 // So, we use GetSecrets and extract the specific placeholder we want
-func (a *AWSSecretsManager) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string) (interface{}, error) {
-	data, err := a.GetSecrets(kvpath, version, annotations)
+func (a *AWSSecretsManager) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
+	data, err := a.GetSecrets(kvpath, version, annotations, options)
 	if err != nil {
 		return nil, err
 	}

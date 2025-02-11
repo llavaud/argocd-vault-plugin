@@ -39,7 +39,7 @@ func (a *AzureKeyVault) Login() error {
 // GetSecrets gets secrets from Azure Key Vault and returns the formatted data
 // For Azure Key Vault, `kvpath` is the unique name of your vault
 // For Azure use the version here not make really sens as each secret have a different version but let support it
-func (a *AzureKeyVault) GetSecrets(kvpath string, version string, _ map[string]string) (map[string]interface{}, error) {
+func (a *AzureKeyVault) GetSecrets(kvpath string, version string, _ map[string]string, options map[string]string) (map[string]interface{}, error) {
 	kvpath = fmt.Sprintf("https://%s.vault.azure.net", kvpath)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -93,7 +93,7 @@ func (a *AzureKeyVault) GetSecrets(kvpath string, version string, _ map[string]s
 // GetIndividualSecret will get the specific secret (placeholder) from the SM backend
 // For Azure Key Vault, `kvpath` is the unique name of your vault
 // Secrets (placeholders) are directly addressable via the API, so only one call is needed here
-func (a *AzureKeyVault) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string) (interface{}, error) {
+func (a *AzureKeyVault) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

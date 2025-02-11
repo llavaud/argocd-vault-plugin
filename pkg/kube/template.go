@@ -39,7 +39,7 @@ func NewTemplate(template unstructured.Unstructured, backend types.Backend, path
 		if pathValidation != nil && !pathValidation.MatchString(path) {
 			return nil, fmt.Errorf("the path %s is disallowed by %s restriction", path, types.EnvPathValidation)
 		}
-		data, err = backend.GetSecrets(path, version, annotations)
+		data, err = backend.GetSecrets(path, version, annotations, map[string]string{})
 		if err != nil {
 			return nil, err
 		}

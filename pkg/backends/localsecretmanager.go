@@ -28,7 +28,7 @@ func (a *LocalSecretManager) Login() error {
 }
 
 // GetSecrets gets secrets using decrypt function and returns the formatted data
-func (a *LocalSecretManager) GetSecrets(path string, version string, annotations map[string]string) (map[string]interface{}, error) {
+func (a *LocalSecretManager) GetSecrets(path string, version string, annotations map[string]string, options map[string]string) (map[string]interface{}, error) {
 	utils.VerboseToStdErr("Local secret manager getting secret %s at version %s", path, version)
 	cleartext, err := a.Decrypt(path, "yaml")
 
@@ -51,8 +51,8 @@ func (a *LocalSecretManager) GetSecrets(path string, version string, annotations
 // GetIndividualSecret will get the specific secret (placeholder) from the backend
 // For local secrets, we only support placeholders replaced from the k/v pairs of a secret which cannot be individually addressed
 // So, we use GetSecrets and extract the specific placeholder we want
-func (a *LocalSecretManager) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string) (interface{}, error) {
-	data, err := a.GetSecrets(kvpath, version, annotations)
+func (a *LocalSecretManager) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
+	data, err := a.GetSecrets(kvpath, version, annotations, options)
 	if err != nil {
 		return nil, err
 	}

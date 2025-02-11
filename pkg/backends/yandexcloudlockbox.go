@@ -26,7 +26,7 @@ func (ycl *YandexCloudLockbox) Login() error {
 }
 
 // GetSecrets gets secrets from lockbox and returns the formatted data
-func (ycl *YandexCloudLockbox) GetSecrets(secretID string, version string, _ map[string]string) (map[string]interface{}, error) {
+func (ycl *YandexCloudLockbox) GetSecrets(secretID string, version string, _ map[string]string, options map[string]string) (map[string]interface{}, error) {
 	req := &lockbox.GetPayloadRequest{
 		SecretId: secretID,
 	}
@@ -52,8 +52,8 @@ func (ycl *YandexCloudLockbox) GetSecrets(secretID string, version string, _ map
 }
 
 // GetIndividualSecret will get the specific secret (placeholder) from the lockbox backend
-func (ycl *YandexCloudLockbox) GetIndividualSecret(secretID, key, version string, _ map[string]string) (interface{}, error) {
-	secrets, err := ycl.GetSecrets(secretID, version, nil)
+func (ycl *YandexCloudLockbox) GetIndividualSecret(secretID, key, version string, _ map[string]string, options map[string]string) (interface{}, error) {
+	secrets, err := ycl.GetSecrets(secretID, version, nil, options)
 	if err != nil {
 		return nil, err
 	}

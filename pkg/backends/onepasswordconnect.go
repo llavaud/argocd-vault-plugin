@@ -25,7 +25,7 @@ func (a *OnePasswordConnect) Login() error {
 }
 
 // GetSecrets gets secrets from 1Password Connect server and returns the formatted data
-func (a *OnePasswordConnect) GetSecrets(path string, version string, annotations map[string]string) (map[string]interface{}, error) {
+func (a *OnePasswordConnect) GetSecrets(path string, version string, annotations map[string]string, options map[string]string) (map[string]interface{}, error) {
 	// Format we expect is vaults/<vault>/items/<item>
 	splits := strings.Split(path, "/")
 	vault := splits[1]
@@ -51,8 +51,8 @@ func (a *OnePasswordConnect) GetSecrets(path string, version string, annotations
 // GetIndividualSecret will get the specific secret (placeholder) from the 1Password connect backend
 // For 1Password, we only support placeholders replaced from the k/v pairs of a secret which cannot be individually addressed
 // So, we use GetSecrets and extract the specific placeholder we want
-func (a *OnePasswordConnect) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string) (interface{}, error) {
-	data, err := a.GetSecrets(kvpath, version, annotations)
+func (a *OnePasswordConnect) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
+	data, err := a.GetSecrets(kvpath, version, annotations, options)
 	if err != nil {
 		return nil, err
 	}

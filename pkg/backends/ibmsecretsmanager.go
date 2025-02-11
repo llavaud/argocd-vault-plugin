@@ -569,7 +569,7 @@ func (i *IBMSecretsManager) resolveGroup(group string) (string, error) {
 }
 
 // GetSecrets returns the data for all secrets of a specific type of a group in IBM Secrets Manager
-func (i *IBMSecretsManager) GetSecrets(path string, version string, annotations map[string]string) (map[string]interface{}, error) {
+func (i *IBMSecretsManager) GetSecrets(path string, version string, annotations map[string]string, options map[string]string) (map[string]interface{}, error) {
 	secretType, group, secretName, err := parsePath(path)
 	if err != nil {
 		return nil, fmt.Errorf("Path is not in the correct format (ibmcloud/$TYPE/secrets/groups/$GROUP) for IBM Secrets Manager: %s", path)
@@ -663,7 +663,7 @@ func (i *IBMSecretsManager) GetSecrets(path string, version string, annotations 
 
 // GetIndividualSecret will get the specific secret (placeholder) from the SM backend
 // This requires listing the secrets of the group to obtain the id, and then using that to grab the one secret's payload
-func (i *IBMSecretsManager) GetIndividualSecret(kvpath, secretRef, version string, annotations map[string]string) (interface{}, error) {
+func (i *IBMSecretsManager) GetIndividualSecret(kvpath, secretRef, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
 	secretType, group, secretName, err := parsePath(kvpath)
 	if err != nil {
 		return nil, fmt.Errorf("Path is not in the correct format (ibmcloud/$TYPE/secrets/groups/$GROUP) for IBM Secrets Manager: %s", kvpath)

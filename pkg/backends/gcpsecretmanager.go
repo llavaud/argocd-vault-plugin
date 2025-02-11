@@ -38,7 +38,7 @@ func (a *GCPSecretManager) Login() error {
 
 // GetSecrets gets secrets from GCP Secret Manager and returns the formatted data
 // The path is of format `projects/project-id/secrets/secret-id`
-func (a *GCPSecretManager) GetSecrets(path string, version string, annotations map[string]string) (map[string]interface{}, error) {
+func (a *GCPSecretManager) GetSecrets(path string, version string, annotations map[string]string, options map[string]string) (map[string]interface{}, error) {
 	matches := GCPPath.FindStringSubmatch(path)
 	if len(matches) == 0 {
 		return nil, fmt.Errorf("Path is not in the correct format (projects/$PROJECT_ID/secrets/$SECRET_ID) for GCP Secrets Manager: %s", path)
@@ -71,8 +71,8 @@ func (a *GCPSecretManager) GetSecrets(path string, version string, annotations m
 // GetIndividualSecret will get the specific secret (placeholder) from the SM backend
 // For GCP, the path is specific to the secret
 // So, we just forward the value from the k/v result of GetSecrets
-func (a *GCPSecretManager) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string) (interface{}, error) {
-	data, err := a.GetSecrets(kvpath, version, annotations)
+func (a *GCPSecretManager) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
+	data, err := a.GetSecrets(kvpath, version, annotations, options)
 	if err != nil {
 		return nil, err
 	}

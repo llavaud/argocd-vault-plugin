@@ -110,6 +110,43 @@ func TestGenericReplacement_specificPath(t *testing.T) {
 	}
 
 	assertSuccessfulReplacement(&dummyResource, &expected, t)
+
+	t.Run("with options", func(t *testing.T) {
+		dummyResource := Resource{
+			TemplateData: map[string]interface{}{
+				"namespace": "<path:blah/blah#namespace#option1:value1,option2:value2>",
+				"name":      "<name>",
+			},
+			Data: map[string]interface{}{
+				"namespace": "something-else",
+				"name":      "foo",
+			},
+			Backend: &mv,
+			Annotations: map[string]string{
+				(types.AVPPathAnnotation): "",
+			},
+		}
+
+		replaceInner(&dummyResource, &dummyResource.TemplateData, genericReplacement)
+
+		if !mv.GetIndividualSecretCalled {
+			t.Fatalf("expected GetSecrets to be called since placeholder contains explicit path so Vault lookup is neeed")
+		}
+
+		expected := Resource{
+			TemplateData: map[string]interface{}{
+				"namespace": "default",
+				"name":      "foo",
+			},
+			Data: map[string]interface{}{
+				"namespace": "something-else",
+				"name":      "foo",
+			},
+			replacementErrors: []error{},
+		}
+
+		assertSuccessfulReplacement(&dummyResource, &expected, t)
+	})
 }
 
 func TestGenericReplacement_specificPathWithValidation(t *testing.T) {
@@ -240,6 +277,41 @@ func TestGenericReplacement_specificPathVersioned(t *testing.T) {
 	}
 
 	assertSuccessfulReplacement(&dummyResource, &expected, t)
+
+	t.Run("with options", func(t *testing.T) {
+		dummyResource := Resource{
+			TemplateData: map[string]interface{}{
+				"first":  "<path:blah/blah#version#1#option1:value1,option2:value2>",
+				"second": "<path:blah/blah#version#2#option1:value1,option2:value2>",
+				"third":  "<path:blah/blah#version#3#option1:value1,option2:value2>",
+				"latest": "<path:blah/blah#version>",
+			},
+			Data:    map[string]interface{}{},
+			Backend: &mv,
+			Annotations: map[string]string{
+				(types.AVPPathAnnotation): "",
+			},
+		}
+
+		replaceInner(&dummyResource, &dummyResource.TemplateData, genericReplacement)
+
+		if !mv.GetIndividualSecretCalled {
+			t.Fatalf("expected GetSecrets to be called since placeholder contains explicit path so Vault lookup is neeed")
+		}
+
+		expected := Resource{
+			TemplateData: map[string]interface{}{
+				"first":  "one",
+				"second": "two",
+				"third":  "three",
+				"latest": "three",
+			},
+			Data:              map[string]interface{}{},
+			replacementErrors: []error{},
+		}
+
+		assertSuccessfulReplacement(&dummyResource, &expected, t)
+	})
 }
 
 func TestGenericReplacement_specificPathNoAnnotation(t *testing.T) {

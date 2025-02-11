@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/vault/api"
@@ -146,4 +147,19 @@ func VerboseToStdErr(format string, message ...interface{}) {
 	if viper.GetBool("verboseOutput") {
 		log.Printf(fmt.Sprintf("%s\n", format), message...)
 	}
+}
+
+func OptionsStringToMap(optionsString string) (map[string]string, error) {
+	options := make(map[string]string)
+	if optionsString != "" {
+		optionPairs := strings.Split(optionsString, ",")
+		for _, pair := range optionPairs {
+			kv := strings.SplitN(pair, ":", 2)
+			if len(kv) == 2 {
+				options[strings.TrimSpace(kv[0])] = strings.TrimSpace(kv[1])
+			}
+		}
+	}
+
+	return options, nil
 }

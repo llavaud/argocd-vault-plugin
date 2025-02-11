@@ -37,13 +37,17 @@ func (v *Vault) Login() error {
 }
 
 // GetSecrets gets secrets from vault and returns the formatted data
-func (v *Vault) GetSecrets(path string, version string, annotations map[string]string) (map[string]interface{}, error) {
+func (v *Vault) GetSecrets(path string, version string, annotations map[string]string, options map[string]string) (map[string]interface{}, error) {
 	var secret *api.Secret
 	var err error
 
 	var kvVersion = v.KvVersion
 	if kv, ok := annotations[types.VaultKVVersionAnnotation]; ok {
 		kvVersion = kv
+	}
+
+	if options["vaultKvVersion"] != "" {
+		kvVersion = options["vaultKvVersion"]
 	}
 
 	// Vault KV-V1 doesn't support versioning so we only honor `version` if KV-V2 is used
@@ -94,8 +98,8 @@ func (v *Vault) GetSecrets(path string, version string, annotations map[string]s
 // GetIndividualSecret will get the specific secret (placeholder) from the SM backend
 // For Vault, we only support placeholders replaced from the k/v pairs of a secret which cannot be individually addressed
 // So, we use GetSecrets and extract the specific placeholder we want
-func (v *Vault) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string) (interface{}, error) {
-	data, err := v.GetSecrets(kvpath, version, annotations)
+func (v *Vault) GetIndividualSecret(kvpath, secret, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
+	data, err := v.GetSecrets(kvpath, version, annotations, options)
 	if err != nil {
 		return nil, err
 	}

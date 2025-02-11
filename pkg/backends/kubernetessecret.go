@@ -31,7 +31,7 @@ func (k *KubernetesSecret) Login() error {
 }
 
 // GetSecrets gets secrets from Kubernetes Secret and returns the formatted data
-func (k *KubernetesSecret) GetSecrets(path string, version string, annotations map[string]string) (map[string]interface{}, error) {
+func (k *KubernetesSecret) GetSecrets(path string, version string, annotations map[string]string, options map[string]string) (map[string]interface{}, error) {
 	utils.VerboseToStdErr("K8s Secret getting secret: %s", path)
 	data, err := k.client.ReadSecretData(path)
 	if err != nil {
@@ -50,9 +50,9 @@ func (k *KubernetesSecret) GetSecrets(path string, version string, annotations m
 // GetIndividualSecret will get the specific secret (placeholder) from the Kubernetes Secret backend
 // Kubernetes Secrets can only be wholly read,
 // So, we use GetSecrets and extract the specific placeholder we want
-func (k *KubernetesSecret) GetIndividualSecret(path, secret, version string, annotations map[string]string) (interface{}, error) {
+func (k *KubernetesSecret) GetIndividualSecret(path, secret, version string, annotations map[string]string, options map[string]string) (interface{}, error) {
 	utils.VerboseToStdErr("K8s Secret getting secret %s and key %s", path, secret)
-	data, err := k.GetSecrets(path, version, annotations)
+	data, err := k.GetSecrets(path, version, annotations, options)
 	if err != nil {
 		return nil, err
 	}
